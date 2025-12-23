@@ -1,7 +1,9 @@
 package com.example.servicefinder
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,25 +14,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 
 @Composable
-fun CustomerRegistrationScreen(onSuccess: () -> Unit) {
+fun ProviderRegistrationScreen(onSuccess: () -> Unit) {
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
+    var inn by remember { mutableStateOf("") }
+    var services by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
     ) {
-        Text(text = "Регистрация заказчика", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Регистрация поставщика", style = MaterialTheme.typography.headlineMedium)
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = fullName,
@@ -42,10 +45,20 @@ fun CustomerRegistrationScreen(onSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = age,
-            onValueChange = { if (it.all { char -> char.isDigit() } || it.isEmpty()) age = it },
-            label = { Text("Возраст") },
+            value = inn,
+            onValueChange = { inn = it },
+            label = { Text("ИНН") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = services,
+            onValueChange = { services = it },
+            label = { Text("Предоставляемые услуги") },
+            maxLines = 3,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -85,9 +98,9 @@ fun CustomerRegistrationScreen(onSuccess: () -> Unit) {
         OutlinedTextField(
             value = address,
             onValueChange = { address = it },
-            label = { Text("Адрес проживания") },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 2
+            label = { Text("Адрес") },
+            maxLines = 2,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -95,27 +108,30 @@ fun CustomerRegistrationScreen(onSuccess: () -> Unit) {
         Button(
             onClick = {
                 isLoading = true
-                // Сохраняем пользователя локально
                 val user = User(
                     id = "user_${System.currentTimeMillis()}",
                     fullName = fullName,
                     email = email,
                     password = password,
-                    role = "customer"
+                    role = "provider",
+                    inn = inn,
+                    services = services.split(",").map { it.trim() }
                 )
                 MemoryRepository.addUser(user)
 
-                // Имитация загрузки
                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                     isLoading = false
                     onSuccess()
                 }, 1000)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading && email.contains("@") && password.length >= 6 && fullName.isNotBlank()
+            enabled = !isLoading && email.contains("@") && password.length >= 6 && fullName.isNotBlank() && inn.length == 12
         ) {
             if (isLoading) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(24.dp)
+                )
             } else {
                 Text("Зарегистрироваться")
             }

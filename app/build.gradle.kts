@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    kotlin("plugin.serialization") version "1.9.24"
+
 }
 
 android {
@@ -50,18 +50,17 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.3")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
 
-    // Supabase-kt (актуальная версия на декабрь 2025)
-    implementation(platform("io.github.jan-tennert.supabase:bom:3.3.0-beta-1"))
-    implementation("io.github.jan-tennert.supabase:auth-kt")
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-
-    // Ktor engine для Android (рекомендуемый)
-    implementation("io.ktor:ktor-client-android:3.0.0")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    // Material3
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.ui:ui:1.6.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
